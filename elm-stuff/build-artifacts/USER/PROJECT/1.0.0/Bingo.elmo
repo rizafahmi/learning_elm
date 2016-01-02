@@ -1,0 +1,68 @@
+Elm.Bingo = Elm.Bingo || {};
+Elm.Bingo.make = function (_elm) {
+   "use strict";
+   _elm.Bingo = _elm.Bingo || {};
+   if (_elm.Bingo.values)
+   return _elm.Bingo.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "Bingo",
+   $Basics = Elm.Basics.make(_elm),
+   $Html = Elm.Html.make(_elm),
+   $Html$Attributes = Elm.Html.Attributes.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $String = Elm.String.make(_elm);
+   var pageFooter = A2($Html.footer,
+   _L.fromArray([]),
+   _L.fromArray([A2($Html.a,
+   _L.fromArray([$Html$Attributes.href("http://citizenlab.co")
+                ,$Html$Attributes.target("_blank")]),
+   _L.fromArray([$Html.text("CitizenLab")]))]));
+   var greet = F4(function (name,
+   colorPrimary,
+   colorSecondary,
+   colorTri) {
+      return A2($Basics._op["++"],
+      name,
+      A2($Basics._op["++"],
+      "\'s favorites are: ",
+      A2($Basics._op["++"],
+      colorPrimary,
+      A2($Basics._op["++"],
+      " ",
+      A2($Basics._op["++"],
+      colorSecondary,
+      A2($Basics._op["++"],
+      " ",
+      colorTri))))));
+   });
+   var title = F2(function (message,
+   times) {
+      return $Html.text($String.trimRight($String.repeat(times)($String.toUpper(A2($Basics._op["++"],
+      message,
+      " ")))));
+   });
+   var pageHeader = A2($Html.h1,
+   _L.fromArray([]),
+   _L.fromArray([A2(title,
+   "Bingo!",
+   3)]));
+   var view = A2($Html.div,
+   _L.fromArray([$Html$Attributes.id("container")]),
+   _L.fromArray([pageHeader
+                ,pageFooter]));
+   var main = view;
+   _elm.Bingo.values = {_op: _op
+                       ,title: title
+                       ,greet: greet
+                       ,pageHeader: pageHeader
+                       ,pageFooter: pageFooter
+                       ,view: view
+                       ,main: main};
+   return _elm.Bingo.values;
+};
