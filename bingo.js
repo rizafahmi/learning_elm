@@ -289,6 +289,25 @@ Elm.Bingo.make = function (_elm) {
    $Result = Elm.Result.make(_elm),
    $Signal = Elm.Signal.make(_elm),
    $String = Elm.String.make(_elm);
+   var listItem = F2(function (phrase,
+   point) {
+      return A2($Html.li,
+      _L.fromArray([]),
+      _L.fromArray([A2($Html.span,
+                   _L.fromArray([$Html$Attributes.$class("phrase")]),
+                   _L.fromArray([$Html.text(phrase)]))
+                   ,A2($Html.span,
+                   _L.fromArray([$Html$Attributes.$class("point")]),
+                   _L.fromArray([$Html.text($Basics.toString(point))]))]));
+   });
+   var listEntries = A2($Html.ul,
+   _L.fromArray([]),
+   _L.fromArray([A2(listItem,
+                "Future Proof",
+                100)
+                ,A2(listItem,
+                "Doing Agile",
+                200)]));
    var pageFooter = A2($Html.footer,
    _L.fromArray([]),
    _L.fromArray([A2($Html.a,
@@ -327,6 +346,7 @@ Elm.Bingo.make = function (_elm) {
    var view = A2($Html.div,
    _L.fromArray([$Html$Attributes.id("container")]),
    _L.fromArray([pageHeader
+                ,listEntries
                 ,pageFooter]));
    var main = view;
    _elm.Bingo.values = {_op: _op
@@ -334,6 +354,8 @@ Elm.Bingo.make = function (_elm) {
                        ,greet: greet
                        ,pageHeader: pageHeader
                        ,pageFooter: pageFooter
+                       ,listItem: listItem
+                       ,listEntries: listEntries
                        ,view: view
                        ,main: main};
    return _elm.Bingo.values;

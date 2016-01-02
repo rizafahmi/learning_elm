@@ -24,8 +24,20 @@ pageFooter =
             a [ href "http://citizenlab.co", target "_blank" ]
               [ text "CitizenLab" ]
            ]
+
+listItem phrase point =
+  li [ ] [
+        span [ class "phrase" ] [ text phrase ],
+        span [ class "point" ] [ text ( toString point ) ]
+       ]
+listEntries =
+  ul [ ] [
+        listItem "Future Proof" 100,
+        listItem "Doing Agile" 200
+       ]
+
 view =
-  div [ id "container" ] [ pageHeader, pageFooter ]
+  div [ id "container" ] [ pageHeader, listEntries, pageFooter ]
 
 
 main =
