@@ -6,6 +6,8 @@ import Html.Events exposing (..)
 
 import String exposing (toUpper, repeat, trimRight)
 
+-- MODEL
+
 newEntry phrase point id =
   {
     phrase = phrase,
@@ -13,6 +15,15 @@ newEntry phrase point id =
     wasSpoken = False,
     id = id
   }
+
+initialModel =
+  { entries = [
+     newEntry "Doing Agile" 100 2,
+     newEntry "Learn Asana" 200 1,
+     newEntry "Procastinate" 350 3
+    ]}
+
+-- VIEW
 
 title message times =
   message ++ " "
@@ -36,15 +47,13 @@ listItem entry =
         span [ class "phrase" ] [ text entry.phrase ],
         span [ class "point" ] [ text ( toString entry.point ) ]
        ]
-listEntries =
-  ul [ ] [
-        listItem ( newEntry "Future Proof" 100 1 ),
-        listItem ( newEntry "Doing Agile" 200 2 )
-       ]
+listEntries entries =
+  ul [ ] ( List.map listItem entries )
 
-view =
-  div [ id "container" ] [ pageHeader, listEntries, pageFooter ]
+
+view model =
+  div [ id "container" ] [ pageHeader, listEntries model.entries, pageFooter ]
 
 
 main =
-  view
+  view initialModel

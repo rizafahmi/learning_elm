@@ -299,6 +299,11 @@ Elm.Bingo.make = function (_elm) {
                    _L.fromArray([$Html$Attributes.$class("point")]),
                    _L.fromArray([$Html.text($Basics.toString(entry.point))]))]));
    };
+   var listEntries = function (entries) {
+      return A2($Html.ul,
+      _L.fromArray([]),
+      A2($List.map,listItem,entries));
+   };
    var pageFooter = A2($Html.footer,
    _L.fromArray([]),
    _L.fromArray([A2($Html.a,
@@ -316,6 +321,13 @@ Elm.Bingo.make = function (_elm) {
    _L.fromArray([A2(title,
    "Bingo!",
    3)]));
+   var view = function (model) {
+      return A2($Html.div,
+      _L.fromArray([$Html$Attributes.id("container")]),
+      _L.fromArray([pageHeader
+                   ,listEntries(model.entries)
+                   ,pageFooter]));
+   };
    var newEntry = F3(function (phrase,
    point,
    id) {
@@ -325,24 +337,23 @@ Elm.Bingo.make = function (_elm) {
              ,point: point
              ,wasSpoken: false};
    });
-   var listEntries = A2($Html.ul,
-   _L.fromArray([]),
-   _L.fromArray([listItem(A3(newEntry,
-                "Future Proof",
-                100,
-                1))
-                ,listItem(A3(newEntry,
-                "Doing Agile",
-                200,
-                2))]));
-   var view = A2($Html.div,
-   _L.fromArray([$Html$Attributes.id("container")]),
-   _L.fromArray([pageHeader
-                ,listEntries
-                ,pageFooter]));
-   var main = view;
+   var initialModel = {_: {}
+                      ,entries: _L.fromArray([A3(newEntry,
+                                             "Doing Agile",
+                                             100,
+                                             2)
+                                             ,A3(newEntry,
+                                             "Learn Asana",
+                                             200,
+                                             1)
+                                             ,A3(newEntry,
+                                             "Procastinate",
+                                             350,
+                                             3)])};
+   var main = view(initialModel);
    _elm.Bingo.values = {_op: _op
                        ,newEntry: newEntry
+                       ,initialModel: initialModel
                        ,title: title
                        ,pageHeader: pageHeader
                        ,pageFooter: pageFooter
