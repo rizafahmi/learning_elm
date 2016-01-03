@@ -24,7 +24,7 @@ initialModel =
     ]}
 
 -- UPDATE
-type Action
+type Aksi
   = NoOp
   | Sort
 
