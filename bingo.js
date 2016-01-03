@@ -289,49 +289,22 @@ Elm.Bingo.make = function (_elm) {
    $Result = Elm.Result.make(_elm),
    $Signal = Elm.Signal.make(_elm),
    $String = Elm.String.make(_elm);
-   var listItem = F2(function (phrase,
-   point) {
+   var listItem = function (entry) {
       return A2($Html.li,
       _L.fromArray([]),
       _L.fromArray([A2($Html.span,
                    _L.fromArray([$Html$Attributes.$class("phrase")]),
-                   _L.fromArray([$Html.text(phrase)]))
+                   _L.fromArray([$Html.text(entry.phrase)]))
                    ,A2($Html.span,
                    _L.fromArray([$Html$Attributes.$class("point")]),
-                   _L.fromArray([$Html.text($Basics.toString(point))]))]));
-   });
-   var listEntries = A2($Html.ul,
-   _L.fromArray([]),
-   _L.fromArray([A2(listItem,
-                "Future Proof",
-                100)
-                ,A2(listItem,
-                "Doing Agile",
-                200)]));
+                   _L.fromArray([$Html.text($Basics.toString(entry.point))]))]));
+   };
    var pageFooter = A2($Html.footer,
    _L.fromArray([]),
    _L.fromArray([A2($Html.a,
    _L.fromArray([$Html$Attributes.href("http://citizenlab.co")
                 ,$Html$Attributes.target("_blank")]),
    _L.fromArray([$Html.text("CitizenLab")]))]));
-   var greet = F4(function (name,
-   colorPrimary,
-   colorSecondary,
-   colorTri) {
-      return A2($Basics._op["++"],
-      name,
-      A2($Basics._op["++"],
-      "\'s favorites are: ",
-      A2($Basics._op["++"],
-      colorPrimary,
-      A2($Basics._op["++"],
-      " ",
-      A2($Basics._op["++"],
-      colorSecondary,
-      A2($Basics._op["++"],
-      " ",
-      colorTri))))));
-   });
    var title = F2(function (message,
    times) {
       return $Html.text($String.trimRight($String.repeat(times)($String.toUpper(A2($Basics._op["++"],
@@ -343,6 +316,25 @@ Elm.Bingo.make = function (_elm) {
    _L.fromArray([A2(title,
    "Bingo!",
    3)]));
+   var newEntry = F3(function (phrase,
+   point,
+   id) {
+      return {_: {}
+             ,id: id
+             ,phrase: phrase
+             ,point: point
+             ,wasSpoken: false};
+   });
+   var listEntries = A2($Html.ul,
+   _L.fromArray([]),
+   _L.fromArray([listItem(A3(newEntry,
+                "Future Proof",
+                100,
+                1))
+                ,listItem(A3(newEntry,
+                "Doing Agile",
+                200,
+                2))]));
    var view = A2($Html.div,
    _L.fromArray([$Html$Attributes.id("container")]),
    _L.fromArray([pageHeader
@@ -350,8 +342,8 @@ Elm.Bingo.make = function (_elm) {
                 ,pageFooter]));
    var main = view;
    _elm.Bingo.values = {_op: _op
+                       ,newEntry: newEntry
                        ,title: title
-                       ,greet: greet
                        ,pageHeader: pageHeader
                        ,pageFooter: pageFooter
                        ,listItem: listItem

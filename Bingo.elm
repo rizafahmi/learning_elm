@@ -6,6 +6,14 @@ import Html.Events exposing (..)
 
 import String exposing (toUpper, repeat, trimRight)
 
+newEntry phrase point id =
+  {
+    phrase = phrase,
+    point = point,
+    wasSpoken = False,
+    id = id
+  }
+
 title message times =
   message ++ " "
   |> toUpper
@@ -13,8 +21,6 @@ title message times =
   |> trimRight
   |> text
 
-greet name colorPrimary colorSecondary colorTri =
-  name ++ "'s favorites are: " ++ colorPrimary ++ " " ++ colorSecondary ++ " " ++ colorTri
 
 pageHeader =
   h1 [] [ title "Bingo!" 3 ]
@@ -25,15 +31,15 @@ pageFooter =
               [ text "CitizenLab" ]
            ]
 
-listItem phrase point =
+listItem entry =
   li [ ] [
-        span [ class "phrase" ] [ text phrase ],
-        span [ class "point" ] [ text ( toString point ) ]
+        span [ class "phrase" ] [ text entry.phrase ],
+        span [ class "point" ] [ text ( toString entry.point ) ]
        ]
 listEntries =
   ul [ ] [
-        listItem "Future Proof" 100,
-        listItem "Doing Agile" 200
+        listItem ( newEntry "Future Proof" 100 1 ),
+        listItem ( newEntry "Doing Agile" 200 2 )
        ]
 
 view =
