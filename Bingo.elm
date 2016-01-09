@@ -28,6 +28,7 @@ initialModel =
 type Aksi
   = NoOp
   | Sort
+  | Delete Int
 
 update action model =
   case action of
@@ -35,6 +36,11 @@ update action model =
       model
     Sort ->
       { model | entries = List.sortBy .points model.entries }
+    Delete id ->
+      let remainingEntries =
+        List.filter (\e -> e.id /= id) model.entries
+      in
+        { model | entries = remainingEntries }
 
 -- VIEW
 
@@ -55,19 +61,24 @@ pageFooter =
               [ text "CitizenLab" ]
            ]
 
-listItem entry =
+listItem address entry =
   li [ ] [
         span [ class "phrase" ] [ text entry.phrase ],
-        span [ class "point" ] [ text ( toString entry.points ) ]
+        span [ class "point" ] [ text ( toString entry.points ) ],
+        button [ class "delete", onClick address (Delete entry.id) ] [ ]
        ]
-listEntries entries =
-  ul [ ] ( List.map listItem entries )
+
+listEntries address entries =
+  let
+      listItems = List.map (listItem address) entries
+  in
+      ul [ ] listItems
 
 
 view address model =
   div [ id "container" ]
         [ pageHeader,
-          listEntries model.entries,
+          listEntries address model.entries,
           button
           [ class "sort",
             onClick address Sort
