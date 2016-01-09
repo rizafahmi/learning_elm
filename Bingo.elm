@@ -1,5 +1,6 @@
 module Bingo where
 
+import Debug
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
@@ -29,6 +30,7 @@ type Aksi
   = NoOp
   | Sort
   | Delete Int
+  | Mark Int
 
 update action model =
   case action of
@@ -37,10 +39,18 @@ update action model =
     Sort ->
       { model | entries = List.sortBy .points model.entries }
     Delete id ->
-      let remainingEntries =
-        List.filter (\e -> e.id /= id) model.entries
+      let
+          remainingEntries =
+            List.filter (\e -> e.id /= id) model.entries
+          _ = Debug.log "the remaining entries" remainingEntries
       in
         { model | entries = remainingEntries }
+    Mark id ->
+      let
+          updateEntry e =
+            if e.id == id then { e | wasSpoken = (not e.wasSpoken) } else e
+      in
+          { model | entries = List.map updateEntry model.entries }
 
 -- VIEW
 
@@ -62,8 +72,11 @@ pageFooter =
            ]
 
 listItem address entry =
-  li [ ] [
-        span [ class "phrase" ] [ text entry.phrase ],
+  li [
+    classList [ ( "highlight", entry.wasSpoken ) ],
+    onClick address (Mark entry.id)
+    ]
+    [ span [ class "phrase" ] [ text entry.phrase ],
         span [ class "point" ] [ text ( toString entry.points ) ],
         button [ class "delete", onClick address (Delete entry.id) ] [ ]
        ]
