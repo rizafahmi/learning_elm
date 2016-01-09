@@ -10373,8 +10373,7 @@ Elm.Bingo.make = function (_elm) {
    var Sort = {ctor: "Sort"};
    var NoOp = {ctor: "NoOp"};
    var totalPoints = function (entries) {
-      var spokenEntries = A2($List.filter,function (_) {    return _.wasSpoken;},entries);
-      return $List.sum(A2($List.map,function (_) {    return _.points;},spokenEntries));
+      return A3($List.foldl,F2(function (e,sum) {    return sum + e.points;}),0,A2($List.filter,function (_) {    return _.wasSpoken;},entries));
    };
    var listEntries = F2(function (address,entries) {
       var listItems = A2($List.map,listItem(address),entries);
@@ -10392,7 +10391,11 @@ Elm.Bingo.make = function (_elm) {
    var newEntry = F3(function (phrase,points,id) {    return {phrase: phrase,points: points,wasSpoken: false,id: id};});
    var initialModel = {entries: _U.list([A3(newEntry,"Doing Agile",400,2),A3(newEntry,"Learn Asana",200,1),A3(newEntry,"Procastinate",350,3)])};
    var main = $StartApp$Simple.start({model: initialModel,view: view,update: update});
+   var Model = function (a) {    return {entries: a};};
+   var Entry = F4(function (a,b,c,d) {    return {phrase: a,points: b,id: c,wasSpoken: d};});
    return _elm.Bingo.values = {_op: _op
+                              ,Entry: Entry
+                              ,Model: Model
                               ,newEntry: newEntry
                               ,initialModel: initialModel
                               ,totalPoints: totalPoints

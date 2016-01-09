@@ -5,11 +5,26 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import StartApp.Simple as StartApp
+import Signal exposing (Address)
 
 import String exposing (toUpper, repeat, trimRight)
 
 -- MODEL
 
+type alias Entry =
+  {
+    phrase: String,
+    points: Int,
+    id: Int,
+    wasSpoken: Bool
+  }
+
+type alias Model =
+  {
+    entries: List Entry
+  }
+
+newEntry : String -> Int -> Int -> Entry
 newEntry phrase points id =
   {
     phrase = phrase,
@@ -18,6 +33,7 @@ newEntry phrase points id =
     id = id
   }
 
+initialModel : Model
 initialModel =
   { entries = [
      newEntry "Doing Agile" 400 2,
@@ -25,11 +41,11 @@ initialModel =
      newEntry "Procastinate" 350 3
     ]}
 
+totalPoints : List Entry -> Int
 totalPoints entries =
-  let
-      spokenEntries = List.filter .wasSpoken entries
-  in
-      List.sum (List.map .points spokenEntries)
+  entries
+    |> List.filter .wasSpoken
+    |> List.foldl (\e sum -> sum + e.points) 0
 
 -- UPDATE
 type Aksi
@@ -38,6 +54,7 @@ type Aksi
   | Delete Int
   | Mark Int
 
+update : Aksi -> Model -> Model
 update action model =
   case action of
     NoOp ->
@@ -60,6 +77,7 @@ update action model =
 
 -- VIEW
 
+title : String -> Int -> Html
 title message times =
   message ++ " "
   |> toUpper
@@ -68,15 +86,18 @@ title message times =
   |> text
 
 
+pageHeader : Html
 pageHeader =
   h1 [] [ title "Bingo!" 3 ]
 
+pageFooter : Html
 pageFooter =
   footer [] [
             a [ href "http://citizenlab.co", target "_blank" ]
               [ text "CitizenLab" ]
            ]
 
+listItem : Address Aksi -> Entry -> Html
 listItem address entry =
   li [
     classList [ ( "highlight", entry.wasSpoken ) ],
@@ -87,6 +108,7 @@ listItem address entry =
         button [ class "delete", onClick address (Delete entry.id) ] [ ]
        ]
 
+listEntries : Address Aksi -> List Entry -> Html
 listEntries address entries =
   let
       listItems = List.map (listItem address) entries
@@ -95,6 +117,7 @@ listEntries address entries =
       ul [ ] items
 
 
+view : Address Aksi -> Model -> Html
 view address model =
   div [ id "container" ]
         [ pageHeader,
@@ -107,6 +130,7 @@ view address model =
           pageFooter
         ]
 
+totalItem : Int -> Html
 totalItem total =
   li [ class "total" ]
   [ span [ class "phrase" ] [ text "Total" ] ,
@@ -114,6 +138,7 @@ totalItem total =
   ]
 
 
+main : Signal Html
 main =
   StartApp.start {
               model = initialModel,
