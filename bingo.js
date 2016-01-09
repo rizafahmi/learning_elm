@@ -10337,6 +10337,12 @@ Elm.Bingo.make = function (_elm) {
    $StartApp$Simple = Elm.StartApp.Simple.make(_elm),
    $String = Elm.String.make(_elm);
    var _op = {};
+   var totalItem = function (total) {
+      return A2($Html.li,
+      _U.list([$Html$Attributes.$class("total")]),
+      _U.list([A2($Html.span,_U.list([$Html$Attributes.$class("phrase")]),_U.list([$Html.text("Total")]))
+              ,A2($Html.span,_U.list([$Html$Attributes.$class("point")]),_U.list([$Html.text($Basics.toString(total))]))]));
+   };
    var pageFooter = A2($Html.footer,
    _U.list([]),
    _U.list([A2($Html.a,_U.list([$Html$Attributes.href("http://citizenlab.co"),$Html$Attributes.target("_blank")]),_U.list([$Html.text("CitizenLab")]))]));
@@ -10364,8 +10370,17 @@ Elm.Bingo.make = function (_elm) {
               ,A2($Html.span,_U.list([$Html$Attributes.$class("point")]),_U.list([$Html.text($Basics.toString(entry.points))]))
               ,A2($Html.button,_U.list([$Html$Attributes.$class("delete"),A2($Html$Events.onClick,address,Delete(entry.id))]),_U.list([]))]));
    });
-   var listEntries = F2(function (address,entries) {    var listItems = A2($List.map,listItem(address),entries);return A2($Html.ul,_U.list([]),listItems);});
    var Sort = {ctor: "Sort"};
+   var NoOp = {ctor: "NoOp"};
+   var totalPoints = function (entries) {
+      var spokenEntries = A2($List.filter,function (_) {    return _.wasSpoken;},entries);
+      return $List.sum(A2($List.map,function (_) {    return _.points;},spokenEntries));
+   };
+   var listEntries = F2(function (address,entries) {
+      var listItems = A2($List.map,listItem(address),entries);
+      var items = A2($Basics._op["++"],listItems,_U.list([totalItem(totalPoints(entries))]));
+      return A2($Html.ul,_U.list([]),items);
+   });
    var view = F2(function (address,model) {
       return A2($Html.div,
       _U.list([$Html$Attributes.id("container")]),
@@ -10374,13 +10389,13 @@ Elm.Bingo.make = function (_elm) {
               ,A2($Html.button,_U.list([$Html$Attributes.$class("sort"),A2($Html$Events.onClick,address,Sort)]),_U.list([$Html.text("sort")]))
               ,pageFooter]));
    });
-   var NoOp = {ctor: "NoOp"};
    var newEntry = F3(function (phrase,points,id) {    return {phrase: phrase,points: points,wasSpoken: false,id: id};});
    var initialModel = {entries: _U.list([A3(newEntry,"Doing Agile",400,2),A3(newEntry,"Learn Asana",200,1),A3(newEntry,"Procastinate",350,3)])};
    var main = $StartApp$Simple.start({model: initialModel,view: view,update: update});
    return _elm.Bingo.values = {_op: _op
                               ,newEntry: newEntry
                               ,initialModel: initialModel
+                              ,totalPoints: totalPoints
                               ,NoOp: NoOp
                               ,Sort: Sort
                               ,Delete: Delete
@@ -10392,5 +10407,6 @@ Elm.Bingo.make = function (_elm) {
                               ,listItem: listItem
                               ,listEntries: listEntries
                               ,view: view
+                              ,totalItem: totalItem
                               ,main: main};
 };

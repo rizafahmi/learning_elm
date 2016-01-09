@@ -25,6 +25,12 @@ initialModel =
      newEntry "Procastinate" 350 3
     ]}
 
+totalPoints entries =
+  let
+      spokenEntries = List.filter .wasSpoken entries
+  in
+      List.sum (List.map .points spokenEntries)
+
 -- UPDATE
 type Aksi
   = NoOp
@@ -84,8 +90,9 @@ listItem address entry =
 listEntries address entries =
   let
       listItems = List.map (listItem address) entries
+      items = listItems ++ [ totalItem ( totalPoints entries ) ]
   in
-      ul [ ] listItems
+      ul [ ] items
 
 
 view address model =
@@ -99,6 +106,12 @@ view address model =
           [ text "sort" ],
           pageFooter
         ]
+
+totalItem total =
+  li [ class "total" ]
+  [ span [ class "phrase" ] [ text "Total" ] ,
+   span [ class "point" ] [ text ( toString total ) ]
+  ]
 
 
 main =
