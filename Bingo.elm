@@ -7,6 +7,8 @@ import Html.Events exposing (..)
 import StartApp.Simple as StartApp
 import Signal exposing (Address)
 
+import BingoUtils as Utils
+
 import String exposing (toUpper, repeat, trimRight)
 
 -- MODEL
@@ -21,7 +23,10 @@ type alias Entry =
 
 type alias Model =
   {
-    entries: List Entry
+    entries: List Entry,
+    phraseInput: String,
+    pointsInput: String,
+    nextId: Int
   }
 
 newEntry : String -> Int -> Int -> Entry
@@ -39,7 +44,11 @@ initialModel =
      newEntry "Doing Agile" 400 2,
      newEntry "Learn Asana" 200 1,
      newEntry "Procastinate" 350 3
-    ]}
+    ],
+    phraseInput = "",
+    pointsInput = "",
+    nextId = 5
+  }
 
 totalPoints : List Entry -> Int
 totalPoints entries =
@@ -48,11 +57,15 @@ totalPoints entries =
     |> List.foldl (\e sum -> sum + e.points) 0
 
 -- UPDATE
+
 type Aksi
   = NoOp
   | Sort
   | Delete Int
   | Mark Int
+  | UpdatePhraseInput String
+  | UpdatePointsInput String
+  | Add
 
 update : Aksi -> Model -> Model
 update action model =
@@ -74,6 +87,30 @@ update action model =
             if e.id == id then { e | wasSpoken = (not e.wasSpoken) } else e
       in
           { model | entries = List.map updateEntry model.entries }
+
+    UpdatePhraseInput contents ->
+      { model | phraseInput = contents }
+
+    UpdatePointsInput contents ->
+      { model | pointsInput = contents }
+
+    Add ->
+      let
+          entryToAdd =
+            newEntry model.phraseInput (Utils.parseInt model.pointsInput) model.nextId
+          isInvalid model =
+            String.isEmpty model.phraseInput || String.isEmpty model.pointsInput
+      in
+          if isInvalid model
+          then model
+          else
+            {
+              model |
+                entries = entryToAdd :: model.entries,
+                phraseInput = "",
+                pointsInput = "",
+                nextId = model.nextId + 1
+            }
 
 -- VIEW
 
@@ -116,11 +153,36 @@ listEntries address entries =
   in
       ul [ ] items
 
+entryForm : Address Aksi -> Model -> Html
+entryForm address model =
+  div [ ]
+  [
+    input
+    [
+      type' "text",
+      placeholder "Phrase",
+      value model.phraseInput,
+      name "phrase",
+      autofocus True,
+      Utils.onInput address UpdatePhraseInput
+    ] [],
+    input
+        [
+          type' "number",
+          placeholder "Point",
+          value model.pointsInput,
+          name "point",
+          Utils.onInput address UpdatePointsInput
+          ] [],
+    button [ class "add", onClick address Add ] [ text "Add" ],
+    h2 [] [ text ( model.phraseInput ++ " " ++ model.pointsInput ) ]
+  ]
 
 view : Address Aksi -> Model -> Html
 view address model =
   div [ id "container" ]
         [ pageHeader,
+          entryForm address model,
           listEntries address model.entries,
           button
           [ class "sort",
